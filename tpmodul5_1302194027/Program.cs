@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 
 public class SayaTubeVideo
 {
@@ -13,12 +14,29 @@ public class SayaTubeVideo
         this.id = r.Next(100000);
         string fiveDigit = this.id.ToString("D5");
 
+        //DbC preconditions
+        Contract.Requires(title != null && title.Length <= 100);
+
         playCount = 0;
-        this.title = title;
+        this.title = title;       
     }
 
     public void IncreasePlayCount(int jmlAngka)
     {
+        //DbC preconditions
+        Contract.Requires(jmlAngka <= 10000000);
+
+        //Exception
+        try
+        {
+            checked
+            {
+                jmlAngka += 1;
+            }
+        } catch (OverflowException e) {
+            Console.WriteLine("CHECKED and CAUGHT:  " + e.ToString());
+        }
+
         this.playCount = jmlAngka;
     }
 
@@ -27,15 +45,15 @@ public class SayaTubeVideo
         Console.WriteLine("id: " + this.id);
         Console.WriteLine("title: " + this.title);
         Console.WriteLine("play count: " + this.playCount);
-        
     }
+
     public static void Main()
     {
-        string judul = "Tutorial Design By Contract - Muhammad Fauzi Dwikurnia";
+        string judul = null;
         //Create object of class SayaTubeVideo
         SayaTubeVideo p = new SayaTubeVideo(judul);
 
-        p.IncreasePlayCount(1);
+        p.IncreasePlayCount(0);
         p.PrintVideoDetails();
     }
 }
